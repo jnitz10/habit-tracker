@@ -52,6 +52,11 @@ router.post('/users/logoutAll', auth, async (req, res) => {
   }
 })
 
+// get current user
+router.get('/users/me', auth, async (req, res) => {
+  res.send(req.user)
+})
+
 // update current user
 router.patch('/users/me', auth, async (req, res) => {
   const updates = Object.keys(req.body)
