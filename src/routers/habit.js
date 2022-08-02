@@ -6,10 +6,21 @@ const auth = require('../middleware/auth')
 
 // Create new habit
 router.post('/habits', auth, async (req, res) => {
-  const habit = new Habit({
-    ...req.body,
+
+  const contents = {
+    description: req.body.description,
     owner: req.user._id
-  })
+  }
+
+  function habitDiscriminator() {
+    if (req.body.type === 'default') {
+      return new Habit.DefaultHabit(contents)
+    } else if (req.body.type === 'xPerDay') {
+      return new Habit.XPerDay(contents)
+    }
+  }
+
+  const habit = habitDiscriminator()
 
   try {
     await habit.save()
@@ -24,21 +35,36 @@ router.patch('/habits/:id', auth, async (req, res) => {
   const update = req.body.update
   const allowedUpdates = ['description', 'progress']
 
+  console.log(update)
+  console.log(req.params.id)
+
   if (!allowedUpdates.includes(update)) {
     return res.status(400).send({ error: 'invalid operation' })
   }
 
 
   try {
-    const habit = await Habit.findOne({ _id: req.params.id, owner: req.user._id })
+    const habit = await Habit.Habit.findOne({ _id: req.params.id, owner: req.user._id })
 
     if (!habit) {
       return res.status(404).send()
     }
 
     if (update === "progress") {
-      habit.progress.push(timestamp())
-      console.log(habit.progress)
+      const updateStamp = timestamp()
+      if (habit.habitType === "xPerDay") {
+        habit.progress[updateStamp] = req.body.quantity
+      }
+      if (habit.habitType === 'default') {
+        if (!habit.progress.includes(updateStamp)) {
+          habit.progress.push(updateStamp)
+        }
+      }
+
+    }
+
+    if (update === 'description') {
+      habit.description = req.body.description
     }
 
     await habit.save()
