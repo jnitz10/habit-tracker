@@ -35,9 +35,6 @@ router.patch('/habits/:id', auth, async (req, res) => {
   const update = req.body.update
   const allowedUpdates = ['description', 'progress']
 
-  console.log(update)
-  console.log(req.params.id)
-
   if (!allowedUpdates.includes(update)) {
     return res.status(400).send({ error: 'invalid operation' })
   }
