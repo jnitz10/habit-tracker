@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import axios from 'axios'
+import { loginUser } from '../../utils/api/api.utils'
 
 const defaultFormFields = {
   email: '',
@@ -21,10 +21,7 @@ const SignInForm = () => {
   const handleSubmit = async (event) => {
     event.preventDefault()
     try {
-      await axios.post('http://localhost:9000/users/login', {
-        email,
-        password
-      })
+      await loginUser(email, password)
         .then(function (response) {
           console.log(response)
         })

@@ -1,5 +1,6 @@
 import { useState } from "react"
-import axios from "axios"
+import { useContext } from "react"
+import { AuthContext } from "../../contexts/auth.context"
 
 const defaultFormFields = {
   name: '',
@@ -11,6 +12,7 @@ const defaultFormFields = {
 const SignUpForm = () => {
   const [formFields, setFormFields] = useState(defaultFormFields)
   const { name, email, password, confirmPassword } = formFields
+  const { signUp } = useContext(AuthContext)
 
 
   const handleChange = (event) => {
@@ -20,6 +22,16 @@ const SignUpForm = () => {
   }
 
   const handleSubmit = async (event) => {
+    event.preventDefault()
+    try {
+      await signUp(name, email, password)
+      setFormFields(defaultFormFields)
+    } catch(error) {
+      console.log(error)
+    }
+  }
+
+/*   const handleSubmit = async (event) => {
     event.preventDefault()
     try {
       await axios.post('http://localhost:9000/users/', {
@@ -34,7 +46,7 @@ const SignUpForm = () => {
       console.log(error)
       console.log({ name, email, password })
     }
-  }
+  }  */
 
   return (
     <div>
