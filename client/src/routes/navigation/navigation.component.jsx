@@ -1,11 +1,14 @@
 import { Fragment } from "react"
 import { Outlet, Link } from "react-router-dom"
 import './navigation.styles.scss'
-import { AuthContext } from "../../contexts/auth.context"
-import { useContext } from "react"
+import {useSelector, useDispatch} from 'react-redux'
+import { logout } from "../../actions/auth"
 
 const Navigation = () => {
-  const { currentUser, logout } = useContext(AuthContext)
+
+  const isLoggedIn = useSelector(state => state.auth.isLoggedIn)
+  const dispatch = useDispatch()
+
 
   return (
     <Fragment>
@@ -14,16 +17,12 @@ const Navigation = () => {
           Home
         </Link>
         <div className='nav-links-container'>
-          {
-            currentUser ? (
-              <span className='nav-link' onClick={() => logout()}>
-                Logout
-              </span>
-            ) : (
-              <Link className='nav-link' to='/sign-in'>
-                Sign In
-              </Link>
-            )
+          {isLoggedIn ? (
+            <span onClick={() => dispatch(logout())}>sign out</span>)
+          :(
+            <Link className='nav-link' to='/sign-in'>
+              Sign In
+            </Link>)
           }
         </div>
       </div>

@@ -1,6 +1,6 @@
 import { useState } from "react"
-import { useContext } from "react"
-import { AuthContext } from "../../contexts/auth.context"
+import { useDispatch, useSelector } from "react-redux"
+import { signup } from "../../actions/auth"
 
 const defaultFormFields = {
   name: '',
@@ -12,7 +12,9 @@ const defaultFormFields = {
 const SignUpForm = () => {
   const [formFields, setFormFields] = useState(defaultFormFields)
   const { name, email, password, confirmPassword } = formFields
-  const { signUp } = useContext(AuthContext)
+
+  const dispatch = useDispatch()
+
 
 
   const handleChange = (event) => {
@@ -24,29 +26,13 @@ const SignUpForm = () => {
   const handleSubmit = async (event) => {
     event.preventDefault()
     try {
-      await signUp(name, email, password)
+      dispatch(signup(name, email, password))
       setFormFields(defaultFormFields)
+      console.log('sign up successful')
     } catch(error) {
       console.log(error)
     }
   }
-
-/*   const handleSubmit = async (event) => {
-    event.preventDefault()
-    try {
-      await axios.post('http://localhost:9000/users/', {
-        name,
-        email,
-        password
-      })
-        .then(function (response) {
-          console.log(response)
-        })
-    } catch (error) {
-      console.log(error)
-      console.log({ name, email, password })
-    }
-  }  */
 
   return (
     <div>

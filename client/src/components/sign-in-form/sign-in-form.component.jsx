@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { loginUser } from '../../utils/api/api.utils'
+import { useDispatch, useSelector } from 'react-redux'
+import { login } from '../../actions/auth'
 
 const defaultFormFields = {
   email: '',
@@ -10,7 +11,11 @@ const SignInForm = () => {
   const [formFields, setFormFields] = useState(defaultFormFields)
   const { email, password } = formFields
 
-  console.log(formFields)
+  const dispatch = useDispatch()
+
+  const { message } = useSelector(state => state.message)
+  const { isLoggedIn } = useSelector(state => state.auth)
+
 
   const handleChange = (event) => {
     const { name, value } = event.target
@@ -20,14 +25,11 @@ const SignInForm = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault()
-    try {
-      await loginUser(email, password)
-        .then(function (response) {
-          console.log(response)
-        })
-    } catch (error) {
-      console.log(error)
-    }
+    dispatch(login(email, password))
+      .then(() => {
+        setFormFields(defaultFormFields)
+      }
+    )
   }
 
   return (
